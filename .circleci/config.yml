@@ -19,14 +19,19 @@ jobs:
     ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
-      - run: |
-          curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
-          tar xf go1.8.3.linux-amd64.tar.gz
-          chown -R root:root ./go
-          mv go /usr/local
-      - run: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcp-key.json
-      - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
-      - run: md5 /root/gcp-key.json
+      - run:
+          name: Decode Google Cloud Creds
+          command: |
+              echo $GCLOUD_SERVICE_KEY | base64 -i --decode > ${HOME}/gcp-key.json
+              export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
+
+      - run:
+          name: Install Go
+          command: |
+              curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+              tar xf go1.8.3.linux-amd64.tar.gz
+              chown -R root:root ./go
+              mv go /usr/local
       - run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
       - checkout
 
