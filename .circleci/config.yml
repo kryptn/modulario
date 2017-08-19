@@ -25,7 +25,8 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
-      #- run: go test -v ./...
+      - run: go test -v #./...
+      - run: go build -o modulario
       - setup_remote_docker:
           version: 17.06.0-ce
 
@@ -33,7 +34,7 @@ jobs:
       - run: |
           ls
           TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app:$TAG -f infra/Dockerfile .
+          docker build -t modulario/app:$TAG -f infra/Dockerfile .
       # docker login -u $DOCKER_USER -p $DOCKER_PASS
       # docker push modulario/app:$TAG
       # docker push modulario/app:latest

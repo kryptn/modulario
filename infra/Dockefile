@@ -1,17 +1,9 @@
-FROM golang:1.8-alpine3.6
+FROM alpine:3.6
 
-ARG GITHUB_TOKEN
+COPY modulario .
 
-WORKDIR /go/src/app
-COPY . .
-
-RUN apk add --virtual .build-dep git gcc musl-dev \
- && git config --global credential.helper store \
- && echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com/" >> ~/.git-credentials \
- && git config --global url."https://github.com".insteadOf git://github.com \
- && go-wrapper download
- && go-wrapper install
+RUN chmod +x modulario
 
 EXPOSE 80:5000
 
-CMD ["go-wrapper", "run"] # ["app"]
+CMD ["modulario"]
