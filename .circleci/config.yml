@@ -21,8 +21,8 @@ jobs:
     steps:
       - run: |
           GCSDK=google-cloud-sdk-167.0.0-linux-x86_64.tar.gz
-          curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/$GCSDK
-          tar -xvzf $GCSDK google-cloud-sdk/
+          curl -sSL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/$GCSDK google-cloud-sdk.tar.gz
+          tar -xvzf google-cloud-sdk.tar.gz
           sh google-cloud-sdk/install.sh
       - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcp-key.json
       - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
