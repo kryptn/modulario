@@ -26,6 +26,7 @@ jobs:
           mv go /usr/local
       - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcp-key.json
       - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
+      - run: ls ${HOME}
       - run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
       - checkout
 
