@@ -22,7 +22,7 @@ jobs:
       - run:
           name: Decode Google Cloud Creds
           command: |
-              curl ${GCLOUD_KEY_JSON} -o ${HOME}/gcp-key.json
+              curl $GCLOUD_KEY_JSON -o /gcp-key.json
           #echo $GCLOUD_SERVICE_KEY | base64 -i - --decode > ${HOME}/gcp-key.json
           #export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
           #gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
