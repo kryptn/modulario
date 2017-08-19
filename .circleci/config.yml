@@ -19,20 +19,19 @@ jobs:
     ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
-      - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
-      - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
+      - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcp-key.json
+      - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
+      - run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
       - checkout
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...
       - run: go test -v #./...
       - run: go build -o modulario
-      - setup_remote_docker:
-          version: 17.06.0-ce
+      - setup_remote_docker
 
       # build and push Docker image
       - run: |
-          ls
           TAG=0.1.$CIRCLE_BUILD_NUM
           docker build -t modulario/app:$TAG -f infra/Dockerfile .
       # docker login -u $DOCKER_USER -p $DOCKER_PASS
