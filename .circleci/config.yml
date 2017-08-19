@@ -23,7 +23,9 @@ jobs:
           name: Decode Google Cloud Creds
           command: |
               echo $GCLOUD_SERVICE_KEY | base64 -i --decode > ${HOME}/gcp-key.json
-          #export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
+              export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
+              gcloud --quiet components update
+              gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
 
       - run:
           name: Install Go
@@ -33,6 +35,8 @@ jobs:
               chown -R root:root ./go
               mv go /usr/local
       #- run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+
+
       - checkout
 
       # specify any bash command here prefixed with `run: `
