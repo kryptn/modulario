@@ -23,8 +23,7 @@ jobs:
       - run:
           name: Decrypt creds
           command: |
-              ls -lah
-              openssl aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY >> ~/key.json
+              openssl -aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY >> ~/key.json
               gcloud auth activate-service-account --key-file ~/key.json
 
       - run:
