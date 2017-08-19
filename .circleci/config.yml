@@ -19,6 +19,8 @@ jobs:
     ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
+      - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+      - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
       - checkout
 
       # specify any bash command here prefixed with `run: `
@@ -34,3 +36,4 @@ jobs:
       # docker login -u $DOCKER_USER -p $DOCKER_PASS
       # docker push modulario/app:$TAG
       # docker push modulario/app:latest
+  deployment:
