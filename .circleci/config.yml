@@ -22,8 +22,8 @@ jobs:
       - run: |
           curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
           tar xf go1.8.3.linux-amd64.tar.gz
-          sudo chown -R root:root ./go
-          sudo mv go /usr/local
+          chown -R root:root ./go
+          mv go /usr/local
       - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcp-key.json
       - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
       - run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
