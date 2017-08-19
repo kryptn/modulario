@@ -19,7 +19,7 @@ jobs:
     ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
-      - run: curl https://sdk.cloud.google.com | bash --disable-prompts
+      - run: curl https://sdk.cloud.google.com > gc.sh| bash gc.sh --disable-prompts
       - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcp-key.json
       - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
       - run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
