@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
+	"github.com/davecgh/go-spew/spew"
 
 	"github.com/kryptn/modulario/data"
 	"github.com/kryptn/modulario/proto"
@@ -47,13 +47,13 @@ func index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Sorry, no frontend yet. #complicated")
 }
 
-func (app *App) GetPost(handler func(post *data.Post, w http.ResponseWriter, r *http.Request)) func(http.ResponseWriter, *http.Request) {
+func (app *App) GetPost(handler func(post *data.Post, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		key := mux.Vars(r)["key"]
 		post, err := app.engine.GetPostLinks(key)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprintf(w, "Post not found")
+			fmt.Fprintf(w, "Post not found: %s", err)
 			return
 		}
 		handler(post, w, r)
