@@ -17,7 +17,7 @@ jobs:
     #### expecting it in the form of
     ####   /go/src/github.com/circleci/go-tool
     ####   /go/src/bitbucket.org/circleci/go-tool
-    working_directory: /go/src/github.com/kryptn/modulario
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
 
@@ -29,7 +29,7 @@ jobs:
           name: Install Docker client
           command: |
             set -x
-            VER="17.06.1-ce"
+            VER="17.03.0-ce"
             curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
             tar -xz -C /tmp -f /tmp/docker-$VER.tgz
             mv /tmp/docker/* /usr/bin
@@ -37,6 +37,7 @@ jobs:
       # build and push Docker image
       - run: |
           TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build -t   modulario/app:$TAG .
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push CircleCI-Public/circleci-demo-docker:$TAG
+          docker build -t modulario/app:$TAG .
+      # docker login -u $DOCKER_USER -p $DOCKER_PASS
+      # docker push modulario/app:$TAG
+      # docker push modulario/app:latest
