@@ -36,4 +36,3 @@ jobs:
       # docker login -u $DOCKER_USER -p $DOCKER_PASS
       # docker push modulario/app:$TAG
       # docker push modulario/app:latest
-  deployment:
