@@ -23,6 +23,7 @@ jobs:
       - run:
           name: Decrypt creds
           command: |
+              apt-get update && apt-get install openssl
               openssl -aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY >> ~/key.json
               gcloud auth activate-service-account --key-file ~/key.json
 
