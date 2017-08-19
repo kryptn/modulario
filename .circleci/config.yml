@@ -30,7 +30,7 @@ jobs:
       # build and push Docker image
       - run: |
           TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app:$TAG .
+          docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app:$TAG -f infra/Dockerfile .
       # docker login -u $DOCKER_USER -p $DOCKER_PASS
       # docker push modulario/app:$TAG
       # docker push modulario/app:latest
