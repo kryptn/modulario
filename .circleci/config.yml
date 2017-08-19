@@ -19,13 +19,12 @@ jobs:
     ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
+      - checkout
       - run:
-          name: Decode Google Cloud Creds
+          name: Decrypt creds
           command: |
-              curl $GCLOUD_KEY_JSON -o /gcp-key.json
-          #echo $GCLOUD_SERVICE_KEY | base64 -i - --decode > ${HOME}/gcp-key.json
-          #export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
-          #gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+              openssl aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY >> ~/key.json
+              gcloud auth activate-service-account --key-file ~/key.json
 
       - run:
           name: Install Go
@@ -37,7 +36,6 @@ jobs:
       #- run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
 
 
-      - checkout
 
       # specify any bash command here prefixed with `run: `
       - run: go get -v -t -d ./...

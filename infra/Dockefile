@@ -2,7 +2,8 @@ FROM alpine:3.6
 
 COPY modulario .
 
-RUN chmod +x modulario
+RUN cp /vol/modulario . \
+ && chmod +x modulario
 
 EXPOSE 80:5000
 
