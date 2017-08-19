@@ -24,7 +24,7 @@ jobs:
           tar xf go1.8.3.linux-amd64.tar.gz
           chown -R root:root ./go
           mv go /usr/local
-      - run: echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcp-key.json
+      - run: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcp-key.json
       - run: export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcp-key.json
       - run: cat ${HOME}/gcp-key.json | grep type
       - run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
