@@ -8,23 +8,13 @@ jobs:
       # specify the version
       - image: google/cloud-sdk:167.0.0
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    #### TEMPLATE_NOTE: go expects specific checkout path representing url
-    #### expecting it in the form of
-    ####   /go/src/github.com/circleci/go-tool
-    ####   /go/src/bitbucket.org/circleci/go-tool
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
       - checkout
       - run:
           name: Decrypt creds
           command: |
-              apt-get update && apt-get install openssl
-              openssl -aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY >> ~/key.json
+              openssl aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY > ~/key.json
               gcloud auth activate-service-account --key-file ~/key.json
 
       - run:
@@ -34,20 +24,18 @@ jobs:
               tar xf go1.8.3.linux-amd64.tar.gz
               chown -R root:root ./go
               mv go /usr/local
-      #- run: gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
+      - run:
+          name: Build Project
+          command: |
+              go get -v -t -d ./...
+              go test -v
+              go build -o modulario
 
-
-
-      # specify any bash command here prefixed with `run: `
-      - run: go get -v -t -d ./...
-      - run: go test -v #./...
-      - run: go build -o modulario
       - setup_remote_docker
 
-      # build and push Docker image
-      - run: |
-          TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build -t modulario/app:$TAG -f infra/Dockerfile .
-      # docker login -u $DOCKER_USER -p $DOCKER_PASS
-      # docker push modulario/app:$TAG
-      # docker push modulario/app:latest
+      - run:
+          name: Build Container
+          command: |
+              TAG=0.1.$CIRCLE_BUILD_NUM
+              docker build -t modulario/app/$TAG -f infra/Dockerfile
+          # this is where docker login -- use google creds
