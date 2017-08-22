@@ -4,6 +4,7 @@
 version: 2
 jobs:
   build:
+    context: org-global
     docker:
       # specify the version
       - image: google/cloud-sdk:167.0.0
