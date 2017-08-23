@@ -14,7 +14,8 @@ jobs:
       - run:
           name: Install Go
           command: |
-              apt-get install golang-1.8-go
+
+              smap install --classic go
 
           #    VERSION=1.8.3
           #    ARCH=amd64
