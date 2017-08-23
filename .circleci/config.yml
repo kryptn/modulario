@@ -7,6 +7,7 @@ jobs:
   setup:
     docker:
       - image: google/cloud-sdk:167.0.0
+
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
       - checkout
@@ -16,7 +17,7 @@ jobs:
               curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
               tar xf go1.8.3.linux-amd64.tar.gz
               chown -R root:root ./go
-              mv go /usr/local
+              mv go /usr/local/bin
   build:
     docker:
       - image: google/cloud-sdk:167.0.0
@@ -57,7 +58,7 @@ workflows:
       - build:
           requires:
             - setup
-          context: org-global
       - deploy:
           requires:
             - build
+          context: org-global
