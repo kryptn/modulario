@@ -15,7 +15,7 @@ jobs:
           name: Install Go
           command: |
 
-              smap install --classic go
+              snap install --classic go
 
           #    VERSION=1.8.3
           #    ARCH=amd64
