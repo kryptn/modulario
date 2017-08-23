@@ -7,7 +7,7 @@ jobs:
   setup:
     machine:
       enabled: true
-    working_directory: /go/src/github.com/kryptn/modulario
+    working_directory: /
     steps:
       - run: echo "just running"
   build:
