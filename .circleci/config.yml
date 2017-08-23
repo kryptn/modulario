@@ -1,19 +1,44 @@
 # Golang CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
-version: 2
-workflows:
-  version: 2
-  build-test-and-deploy:
-    jobs:
-      - build:
-        context: org-global
+version: 2.0
 
 jobs:
+  setup:
+    docker:
+      - image: google/cloud-sdk:167.0.0
+    working_directory: /go/src/github.com/kryptn/modulario
+    steps:
+      - checkout
+      - run:
+          name: Install Go
+          command: |
+              curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+              tar xf go1.8.3.linux-amd64.tar.gz
+              chown -R root:root ./go
+              mv go /usr/local
   build:
     docker:
       - image: google/cloud-sdk:167.0.0
-
+    working_directory: /go/src/github.com/kryptn/modulario
+    steps:
+      - checkout
+      - run:
+          name: Build Project
+          command: |
+              go get -v -t -d ./...
+              go test -v
+              go build -o modulario
+      - setup_remote_docker
+      - run:
+          name: Build Container
+          command: |
+              TAG=0.1.$CIRCLE_BUILD_NUM
+              docker build -t modulario/app/$TAG -f infra/Dockerfile
+          # this is where docker login -- use google creds
+  deploy:
+    docker:
+      - image: google/cloud-sdk:167.0.0
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
       - checkout
@@ -23,25 +48,16 @@ jobs:
               openssl aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY > ~/key.json
               gcloud auth activate-service-account --key-file ~/key.json
 
-      - run:
-          name: Install Go
-          command: |
-              curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
-              tar xf go1.8.3.linux-amd64.tar.gz
-              chown -R root:root ./go
-              mv go /usr/local
-      - run:
-          name: Build Project
-          command: |
-              go get -v -t -d ./...
-              go test -v
-              go build -o modulario
 
-      - setup_remote_docker
-
-      - run:
-          name: Build Container
-          command: |
-              TAG=0.1.$CIRCLE_BUILD_NUM
-              docker build -t modulario/app/$TAG -f infra/Dockerfile
-          # this is where docker login -- use google creds
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - setup
+      - build:
+          requires:
+            - setup
+          context: org-global
+      - deploy:
+          requires:
+            - build
