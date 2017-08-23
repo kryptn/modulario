@@ -9,7 +9,7 @@ jobs:
       - image: alpine
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
-      - echo "just running"
+      - run: echo "just running"
   build:
     docker:
       - image: google/cloud-sdk:167.0.0
