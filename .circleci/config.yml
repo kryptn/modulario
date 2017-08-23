@@ -30,6 +30,9 @@ jobs:
           command: |
               TAG=0.1.$CIRCLE_BUILD_NUM
               docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app -f infra/Dockerfile .
+              docker tag us.gcr.io/modulario-177306/app:$TAG
+              docker tag us.gcr.io/modulario-177306/app:latest
+              gcloud docker -- push us.gcr.io/modulario-177306/app
           # this is where docker login -- use google creds
   deploy:
     docker:
