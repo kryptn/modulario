@@ -51,7 +51,7 @@ jobs:
           name: Build Container
           command: |
               TAG=0.1.$CIRCLE_BUILD_NUM
-              docker build -t modulario/app/$TAG -f infra/Dockerfile
+              docker build -t modulario/app -f infra/Dockerfile
           # this is where docker login -- use google creds
   deploy:
     docker:
