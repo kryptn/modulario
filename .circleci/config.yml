@@ -25,6 +25,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install Go
+          command: |
+              curl -O https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+              tar xf go1.8.3.linux-amd64.tar.gz
+              mv go /usr/local
+              export PATH=/go/bin:/usr/local/go/bin:$PATH
+      - run:
           name: Build Project
           command: |
               export PATH=/go/bin:/usr/local/go/bin:$PATH
