@@ -38,7 +38,6 @@ jobs:
               docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
               docker tag modulario/app us.gcr.io/modulario-177306/app:latest
               gcloud docker -- push us.gcr.io/modulario-177306/app
-          # this is where docker login -- use google creds
   deploy:
     docker:
       - image: google/cloud-sdk:167.0.0
@@ -54,7 +53,7 @@ jobs:
           name: Deploy to Container Engine
           command: |
               gcloud container clusters get-credentials modulario
-              kubectl create -f infra/k8s/v1/
+              kubectl create --zone=us-central1-a infra/k8s/v1/
 
 
 workflows:
