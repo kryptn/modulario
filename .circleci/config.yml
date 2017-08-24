@@ -52,8 +52,8 @@ jobs:
       - run:
           name: Deploy to Container Engine
           command: |
-              gcloud container clusters get-credentials modulario
-              kubectl create --zone=us-central1-a infra/k8s/v1/
+              gcloud container clusters get-credentials modulario --zone us-central1-a
+              kubectl create infra/k8s/v1/
 
 
 workflows:
