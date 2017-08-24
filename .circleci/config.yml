@@ -55,7 +55,7 @@ jobs:
               gcloud config set project modulario-177306
               gcloud config set compute/zone us-west1-a
               gcloud container clusters get-credentials modulario
-              kubectl create infra/k8s/v1/
+              kubectl create -f infra/k8s/v1/
 
 
 workflows:
