@@ -5,7 +5,7 @@ ARG GITHUB_TOKEN
 WORKDIR /go/src/app
 COPY . .
 
-RUN apk add -U --virtual .deps gcc musl-dev \
+RUN apk add -U --virtual .deps git gcc musl-dev \
  && git config --global credential.helper store \
  && echo "https://${GITHUB_TOKEN}:x-oauth-basic@github.com/" >> ~/.git-credentials \
  && git config --global url."https://github.com".insteadOf git://github.com \
