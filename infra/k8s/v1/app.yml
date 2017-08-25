@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: us.gcr.io/modulario-177306/app:latest
+          image: us.gcr.io/modulario-177306/app:#MODULARIO_VERSION#
           resources:
             requests:
               cpu: 100m
