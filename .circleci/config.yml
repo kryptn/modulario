@@ -2,7 +2,6 @@
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2.0
-
 jobs:
   setup:
     docker:
@@ -21,15 +20,8 @@ jobs:
           command: |
               echo $GCP_KEY | base64 --decode > ~/key.json
               gcloud auth activate-service-account --key-file ~/key.json
-      - setup_remote_docker
-      - run:
-          name: Install Docker client
-          command: |
-              set -x
-              VER="17.03.0-ce"
-              curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
-              tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-              mv /tmp/docker/* /usr/bin
+      - setup_remote_docker:
+          version: 17.05.0-ce
       - run:
           name: Build Container
           command: |
@@ -57,8 +49,6 @@ jobs:
               gcloud container clusters get-credentials modulario
               find ./infra -type f -exec sed -i -e 's/#MODULARIO_VERSION#/0.1.'"$((CIRCLE_BUILD_NUM - 1))"'/g' {} \;
               kubectl apply -f infra/k8s/v1/
-
-
 workflows:
   version: 2
   build-test-and-deploy:
