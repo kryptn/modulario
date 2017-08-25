@@ -14,6 +14,13 @@ type Post struct {
 	Key    string `gorm:"index"`
 	UserID uint   `gorm:"index"`
 	Links  []Link // one to many
+
+
+	// conditional things
+
+	DeciderType string
+	Conditionals []Conditional
+	Decider func() Link `gorm:"-" json:"-"`
 }
 
 type Link struct {
@@ -22,4 +29,27 @@ type Link struct {
 	LastHttpStatus uint `gorm:"default:200"`
 	Accesses       uint `gorm:"default:0"`
 	PostID         uint `gorm:"index"`
+
+	// this is for conditional stuffs
+	Condition Conditional
+
+}
+
+type AttachedPost struct {
+	gorm.Model
+	ReferredPostID string
+	PostID uint `gorm:"index"`
+
+	Metric uint
+
+	Post Post
+}
+
+type Conditional struct {
+	gorm.Model
+
+	Threshold uint
+
+	LinkID uint
+	PostID uint `gorm:"index"`
 }

@@ -99,7 +99,7 @@ func (app *App) CreatePost(w http.ResponseWriter, r *http.Request) {
 	user := data.User{}
 	user.ID = 0
 
-	post, err := app.engine.CreatePost(user, req.Links)
+	post, err := app.engine.CreatePost(user, req)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error while creating post: %s", err)

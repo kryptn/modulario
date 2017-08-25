@@ -3,16 +3,19 @@ package data
 import (
 	"log"
 	"math/rand"
+
+	"github.com/kryptn/modulario/proto"
 )
 
 var runes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func (e *Engine) CreatePost(user User, raw_links []string) (Post, error) {
+func (e *Engine) CreatePost(user User, request proto.JsonCreateRequest) (Post, error) {
 	post := Post{
 		Key:    makeKey(10),
 		UserID: user.ID,
+		DeciderType: request.DeciderType,
 		Links: func() (links []Link) {
-			for _, raw_link := range raw_links {
+			for _, raw_link := range request.Links {
 				links = append(links, Link{Url: raw_link})
 			}
 			return
@@ -69,10 +72,9 @@ func (e *Engine) VisitPost(post *Post) (link Link, err error) {
 			return Link{}, err
 		}
 	}
-	link = post.Links[rand.Intn(len(post.Links))]
-	link.Accesses += 1
-	e.db.Save(&link)
-	return link, err
+
+	decider := e.BuildDecider(*post)
+	return decider(), nil
 }
 
 func makeKey(n int) string {
