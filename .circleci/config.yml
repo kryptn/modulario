@@ -47,7 +47,7 @@ jobs:
       - run:
           name: Decrypt creds
           command: |
-              openssl aes-256-cbc -d -in secrets/key.enc -k $ENC_KEY > ~/key.json
+              echo $GCP_KEY | base64 --decode > ~/key.json
               gcloud auth activate-service-account --key-file ~/key.json
       - run:
           name: Deploy to Container Engine
