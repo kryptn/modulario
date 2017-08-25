@@ -11,7 +11,7 @@ RUN apk add -U --virtual .deps gcc musl-dev \
  && git config --global url."https://github.com".insteadOf git://github.com \
  && go-wrapper download \
  && go-wrapper install \
- && apk del .deps
+ && apk del .deps \
  && rm ~/.git-credentials
 
 EXPOSE 80:5000
