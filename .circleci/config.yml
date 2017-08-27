@@ -27,7 +27,7 @@ build_backend_and_push: &build_backend_and_push
   name: Build Container
   command: |
       TAG=0.1.$CIRCLE_SHA1
-      docker build --build-arg -t modulario/app -f infra/Dockerfile.backend .
+      docker build -t modulario/app -f infra/Dockerfile.backend .
       docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
       docker tag modulario/app us.gcr.io/modulario-177306/app:latest
       gcloud docker -- push us.gcr.io/modulario-177306/app
@@ -36,7 +36,7 @@ build_frontend_and_push: &build_frontend_and_push
   name: Build Container
   command: |
       TAG=0.1.$CIRCLE_SHA1
-      docker build --build-arg -t modulario/frontend -f infra/Dockerfile.frontend .
+      docker build -t modulario/frontend -f infra/Dockerfile.frontend .
       docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
       docker tag modulario/app us.gcr.io/modulario-177306/app:latest
       gcloud docker -- push us.gcr.io/modulario-177306/app
