@@ -14,15 +14,6 @@ decrypt: &decrypt_creds
       base64 -d key.enc > ~/key.json
       gcloud auth activate-service-account --key-file ~/key.json
 
-build_and_push: &build_and_push
-  name: Build Container
-  command: |
-      TAG=0.1.$CIRCLE_BUILD_NUM
-      docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app -f infra/Dockerfile .
-      docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
-      docker tag modulario/app us.gcr.io/modulario-177306/app:latest
-      gcloud docker -- push us.gcr.io/modulario-177306/app
-
 install_docker: &install_docker
   name: Install Docker client
   command: |
@@ -31,6 +22,15 @@ install_docker: &install_docker
       curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
       tar -xz -C /tmp -f /tmp/docker-$VER.tgz
       mv /tmp/docker/* /usr/bin
+
+build_and_push: &build_and_push
+  name: Build Container
+  command: |
+      TAG=0.1.$CIRCLE_BUILD_NUM
+      docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app -f infra/Dockerfile .
+      docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
+      docker tag modulario/app us.gcr.io/modulario-177306/app:latest
+      gcloud docker -- push us.gcr.io/modulario-177306/app
 
 deploy: &deploy
   name: Deploy to Container Engine
