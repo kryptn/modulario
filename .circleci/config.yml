@@ -52,6 +52,7 @@ jobs:
       - run:
           name: Deploy to Container Engine
           command: |
+              gcloud components install kubectl
               gcloud config set project modulario-177306
               gcloud config set compute/zone us-west1-a
               gcloud container clusters get-credentials modulario
