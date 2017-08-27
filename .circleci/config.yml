@@ -10,7 +10,8 @@ config: &config
 decrypt: &decrypt
   name: Decrypt creds
   command: |
-      echo $GCP_KEY | base64 --decode > ~/key.json
+      echo $GCP_KEY > key.enc
+      base64 -d key.enc > ~/key.json
       gcloud auth activate-service-account --key-file ~/key.json
 
 version: 2.0
