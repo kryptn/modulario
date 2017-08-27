@@ -23,11 +23,20 @@ install_docker: &install_docker
       tar -xz -C /tmp -f /tmp/docker-$VER.tgz
       mv /tmp/docker/* /usr/bin
 
-build_and_push: &build_and_push
+build_backend_and_push: &build_backend_and_push
   name: Build Container
   command: |
-      TAG=0.1.$CIRCLE_BUILD_NUM
-      docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app -f infra/Dockerfile .
+      TAG=0.1.$CIRCLE_SHA1
+      docker build --build-arg -t modulario/app -f infra/Dockerfile.backend .
+      docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
+      docker tag modulario/app us.gcr.io/modulario-177306/app:latest
+      gcloud docker -- push us.gcr.io/modulario-177306/app
+
+build_frontend_and_push: &build_frontend_and_push
+  name: Build Container
+  command: |
+      TAG=0.1.$CIRCLE_SHA1
+      docker build --build-arg -t modulario/frontend -f infra/Dockerfile.frontend .
       docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
       docker tag modulario/app us.gcr.io/modulario-177306/app:latest
       gcloud docker -- push us.gcr.io/modulario-177306/app
@@ -41,7 +50,7 @@ deploy: &deploy
         gcloud config set project modulario-177306
         gcloud config set compute/zone us-west1-a
         gcloud container clusters get-credentials modulario
-        find ./infra -type f -exec sed -i -e 's/#MODULARIO_VERSION#/0.1.'"$((CIRCLE_BUILD_NUM - 1))"'/g' {} \;
+        find ./infra -type f -exec sed -i -e "s|#MODULARIO_VERSION#|0.1.$CIRCLE_SHA1/g" {} \;
         kubectl apply -f infra/k8s/v1/
       else
         echo Not on master -- skipping deploy
@@ -55,14 +64,22 @@ jobs:
     working_directory: /go/src/github.com/kryptn/modulario
     steps:
       - run: echo "just running"
-  build:
+  build-backend:
     << : *config
     steps:
       - checkout
       - run: *decrypt_creds
       - setup_remote_docker
       - run: *install_docker
-      - run: *build_and_push
+      - run: *build_backend_and_push
+  build-frontend:
+      << : *config
+      steps:
+        - checkout
+        - run: *decrypt_creds
+        - setup_remote_docker
+        - run: *install_docker
+        - run: *build_frontend_and_push
   deploy:
     << : *config
     steps:
@@ -75,11 +92,16 @@ workflows:
   build-test-and-deploy:
     jobs:
       - setup
-      - build:
+      - build-backend:
+          requires:
+            - setup
+          context: org-global
+      - build-frontend:
           requires:
             - setup
           context: org-global
       - deploy:
           requires:
-            - build
+            - build-frontend
+            - build-backend
           context: org-global

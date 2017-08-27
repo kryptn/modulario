@@ -2,17 +2,17 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: modulario-backend
+  name: modulario-frontend
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: modulario-backend
+        app: modulario-frontend
     spec:
       containers:
         - name: app
-          image: us.gcr.io/modulario-177306/app:#MODULARIO_VERSION#
+          image: us.gcr.io/modulario-177306/frontend:#MODULARIO_VERSION#
           resources:
             requests:
               cpu: 100m
@@ -23,13 +23,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: modulario-backend
+  name: modulario-frontend
   labels:
-    app: modulario-backend
+    app: modulario-frontend
 spec:
   type: LoadBalancer
   ports:
-  - port: 8000
-    targetPort: 5000
+  - port: 80
+    targetPort: 3000
   selector:
-    app: modulario-backend
+    app: modulario-frontend

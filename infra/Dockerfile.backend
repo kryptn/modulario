@@ -1,0 +1,15 @@
+FROM golang:1.8-alpine3.6
+
+ARG GITHUB_TOKEN
+
+WORKDIR /go/src/app
+COPY . .
+
+RUN apk add -U --virtual .deps git gcc musl-dev \
+ && go-wrapper download \
+ && go-wrapper install \
+ && apk del .deps
+
+EXPOSE 8000:5000
+
+CMD ["go-wrapper", "run"] # ["app"]
