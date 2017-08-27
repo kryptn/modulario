@@ -41,6 +41,15 @@ build_frontend_and_push: &build_frontend_and_push
       docker tag modulario/frontend us.gcr.io/modulario-177306/frontend:latest
       gcloud docker -- push us.gcr.io/modulario-177306/frontend
 
+build_and_push: &build_and_push
+  name: Build $BUILD_CONTAINER
+  command: |
+      TAG=0.1.$CIRCLE_SHA1
+      docker build -t modulario/$BUILD_CONTAINER -f infra/Dockerfile.$BUILD_CONTAINER .
+      docker tag modulario/$BUILD_CONTAINER us.gcr.io/modulario-177306/$BUILD_CONTAINER:$TAG
+      docker tag modulario/$BUILD_CONTAINER us.gcr.io/modulario-177306/$BUILD_CONTAINER:latest
+      gcloud docker -- push us.gcr.io/modulario-177306/$BUILD_CONTAINER
+
 deploy: &deploy
   name: Deploy to Container Engine
   command: |
@@ -50,7 +59,7 @@ deploy: &deploy
         gcloud config set project modulario-177306
         gcloud config set compute/zone us-west1-a
         gcloud container clusters get-credentials modulario
-        find ./infra -type f -exec sed -i -e "s|#MODULARIO_VERSION#|0.1.$CIRCLE_SHA1/g" {} \;
+        find ./infra -type f -exec sed -i -e "s|#MODULARIO_VERSION#|0.1.$CIRCLE_SHA1|g" {} \;
         kubectl apply -f infra/k8s/v1/
       else
         echo Not on master -- skipping deploy
