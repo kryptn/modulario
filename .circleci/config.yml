@@ -7,12 +7,40 @@ config: &config
   docker:
     - image: google/cloud-sdk:167.0.0-alpine
 
-decrypt: &decrypt
+decrypt: &decrypt_creds
   name: Decrypt creds
   command: |
       echo $GCP_KEY > key.enc
       base64 -d key.enc > ~/key.json
       gcloud auth activate-service-account --key-file ~/key.json
+
+build_and_push: &build_and_push
+  name: Build Container
+  command: |
+      TAG=0.1.$CIRCLE_BUILD_NUM
+      docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app -f infra/Dockerfile .
+      docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
+      docker tag modulario/app us.gcr.io/modulario-177306/app:latest
+      gcloud docker -- push us.gcr.io/modulario-177306/app
+
+install_docker: &install_docker
+  name: Install Docker client
+  command: |
+      set -x
+      VER="17.03.0-ce"
+      curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+      tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+      mv /tmp/docker/* /usr/bin
+
+deploy: &deploy
+  name: Deploy to Container Engine
+  command: |
+      gcloud components install kubectl
+      gcloud config set project modulario-177306
+      gcloud config set compute/zone us-west1-a
+      gcloud container clusters get-credentials modulario
+      find ./infra -type f -exec sed -i -e 's/#MODULARIO_VERSION#/0.1.'"$((CIRCLE_BUILD_NUM - 1))"'/g' {} \;
+      kubectl apply -f infra/k8s/v1/
 
 version: 2.0
 jobs:
@@ -26,38 +54,17 @@ jobs:
     << : *config
     steps:
       - checkout
-      - run: *decrypt
+      - run: *decrypt_creds
       - setup_remote_docker
-      - run:
-          name: Install Docker client
-          command: |
-              set -x
-              VER="17.03.0-ce"
-              curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
-              tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-              mv /tmp/docker/* /usr/bin
-      - run:
-          name: Build Container
-          command: |
-              TAG=0.1.$CIRCLE_BUILD_NUM
-              docker build --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t modulario/app -f infra/Dockerfile .
-              docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
-              docker tag modulario/app us.gcr.io/modulario-177306/app:latest
-              gcloud docker -- push us.gcr.io/modulario-177306/app
+      - run: *install_docker
+      - run: *build_and_push
   deploy:
     << : *config
     steps:
       - checkout
-      - run: *decrypt
-      - run:
-          name: Deploy to Container Engine
-          command: |
-              gcloud components install kubectl
-              gcloud config set project modulario-177306
-              gcloud config set compute/zone us-west1-a
-              gcloud container clusters get-credentials modulario
-              find ./infra -type f -exec sed -i -e 's/#MODULARIO_VERSION#/0.1.'"$((CIRCLE_BUILD_NUM - 1))"'/g' {} \;
-              kubectl apply -f infra/k8s/v1/
+      - run: *decrypt_creds
+      - run: *deploy
+
 workflows:
   version: 2
   build-test-and-deploy:
