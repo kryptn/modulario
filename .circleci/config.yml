@@ -5,7 +5,7 @@
 config: &config
   working_directory: /go/src/github.com/kryptn/modulario
   docker:
-    - image: google/cloud-sdk:167.0.0
+    - image: google/cloud-sdk:167.0.0-alpine
 
 decrypt: &decrypt
   name: Decrypt creds
