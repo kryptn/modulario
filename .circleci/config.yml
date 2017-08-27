@@ -37,8 +37,8 @@ build_frontend_and_push: &build_frontend_and_push
   command: |
       TAG=0.1.$CIRCLE_SHA1
       docker build -t modulario/frontend -f infra/Dockerfile.frontend .
-      docker tag modulario/app us.gcr.io/modulario-177306/app:$TAG
-      docker tag modulario/app us.gcr.io/modulario-177306/app:latest
+      docker tag modulario/app us.gcr.io/modulario-177306/frontend:$TAG
+      docker tag modulario/app us.gcr.io/modulario-177306/frontend:latest
       gcloud docker -- push us.gcr.io/modulario-177306/app
 
 deploy: &deploy
