@@ -39,7 +39,7 @@ build_frontend_and_push: &build_frontend_and_push
       docker build -t modulario/frontend -f infra/Dockerfile.frontend .
       docker tag modulario/app us.gcr.io/modulario-177306/frontend:$TAG
       docker tag modulario/app us.gcr.io/modulario-177306/frontend:latest
-      gcloud docker -- push us.gcr.io/modulario-177306/app
+      gcloud docker -- push us.gcr.io/modulario-177306/frontend
 
 deploy: &deploy
   name: Deploy to Container Engine
