@@ -14,7 +14,7 @@ func (e *Engine) CreateUser(username, password string) (User, error) {
 	return user, nil
 }
 
-func (e *Engine) AuthorizeUser(username, password string) (user User, err error)  {
+func (e *Engine) AuthorizeUser(username, password string) (user User, err error) {
 	err = e.db.Where(&User{Username: username}).First(&user).Error
 	if err != nil {
 		return User{}, err

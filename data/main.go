@@ -28,5 +28,5 @@ func (e *Engine) InitDB() {
 func (e *Engine) InitSchema() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	e.db.AutoMigrate(&User{}, &Post{}, &Link{}, &Conditional{})
-	e.db.Model(&Link{}).AddForeignKey("post_id", "posts(id)", "CASCADE", "RESTRICT")
+	//e.db.Model(&Link{}).AddForeignKey("post_id", "posts(id)", "CASCADE", "RESTRICT")
 }

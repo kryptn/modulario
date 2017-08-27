@@ -6,19 +6,27 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/gorilla/mux"
 
 	"github.com/kryptn/modulario/data"
 	"github.com/kryptn/modulario/proto"
+	"time"
 )
 
 func Handle() {
 
 	app := buildHandler()
 
+	srv := &http.Server{
+		Handler: app.router,
+		Addr: ":5000",
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout: 10 * time.Second,
+	}
+
 	log.Printf("Serving on localhost")
-	log.Fatal(http.ListenAndServe(":5000", app.router))
+	log.Fatal(srv.ListenAndServe())
 }
 
 func buildHandler() *App {
@@ -30,10 +38,10 @@ func buildHandler() *App {
 
 	app.router = mux.NewRouter()
 	app.router.HandleFunc("/", index).Methods("GET")
-	app.router.HandleFunc(`/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.getPost)).Methods("GET").Name("post")
-	app.router.HandleFunc(`/view/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.viewPost)).Methods("GET").Name("view_post")
-	app.router.HandleFunc(`/delete/{key:[a-zA-Z0-9]{5,12}}`, app.DeletePost).Methods("GET").Name("delete_post")
-	app.router.HandleFunc("/create/", app.CreatePost).Methods("POST")
+	app.router.HandleFunc(`/api/v1/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.getPost)).Methods("GET").Name("post")
+	app.router.HandleFunc(`/api/v1/view/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.viewPost)).Methods("GET").Name("view_post")
+	app.router.HandleFunc(`/api/v1/delete/{key:[a-zA-Z0-9]{5,12}}`, app.DeletePost).Methods("GET").Name("delete_post")
+	app.router.HandleFunc("/api/v1/create/", app.CreatePost).Methods("POST")
 
 	return &app
 }
@@ -44,7 +52,7 @@ type App struct {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Sorry, no frontend yet. #complicated")
+	http.Redirect(w, r, "http://localhost:3000/", http.StatusTemporaryRedirect)
 }
 
 func (app *App) GetPost(handler func(post *data.Post, w http.ResponseWriter, r *http.Request)) http.HandlerFunc {

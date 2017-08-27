@@ -1,12 +1,11 @@
 package main
 
 import (
-	"github.com/kryptn/modulario/clients/http"
 	"flag"
+	"github.com/kryptn/modulario/clients/http"
 )
 
 var runType = flag.String("ServiceRUnType", "server", "Select server or cli")
-
 
 func init() {
 	flag.Parse()
@@ -28,6 +27,5 @@ func main() {
 	} else {
 		serveCli()
 	}
-
 
 }

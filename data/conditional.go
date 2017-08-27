@@ -5,8 +5,8 @@ import (
 )
 
 func (e *Engine) BuildDecider(post Post) func() Link {
-	deciderMap := map[string]func(Post)func()Link{
-		"random": e.BuildRandomDecider,
+	deciderMap := map[string]func(Post) func() Link{
+		"random":     e.BuildRandomDecider,
 		"popularity": e.BuildPopularityDecider,
 	}
 
@@ -30,14 +30,22 @@ func (e *Engine) BuildRandomDecider(post Post) func() Link {
 
 func (e *Engine) BuildPopularityDecider(post Post) func() Link {
 	var lastLink *Link
+	var result *Link
 
 	return func() Link {
-		for _, link := range  post.Links {
+		for _, link := range post.Links {
 			lastLink = &link
-			if link.Condition.Threshold > link.Accesses {
-				return link
+			if link.Condition.Threshold > e.TotalPostVisits(&post) {
+				result = &link
+				break
 			}
 		}
-		return *lastLink
+		if result == nil {
+			result = lastLink
+		}
+
+		result.Accesses += 1
+		e.db.Save(&result)
+		return *result
 	}
 }

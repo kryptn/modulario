@@ -15,12 +15,11 @@ type Post struct {
 	UserID uint   `gorm:"index"`
 	Links  []Link // one to many
 
-
 	// conditional things
 
-	DeciderType string
+	DeciderType  string
 	Conditionals []Conditional
-	Decider func() Link `gorm:"-" json:"-"`
+	Decider      func() Link `gorm:"-" json:"-"`
 }
 
 type Link struct {
@@ -32,13 +31,12 @@ type Link struct {
 
 	// this is for conditional stuffs
 	Condition Conditional
-
 }
 
 type AttachedPost struct {
 	gorm.Model
 	ReferredPostID string
-	PostID uint `gorm:"index"`
+	PostID         uint `gorm:"index"`
 
 	Metric uint
 
@@ -50,6 +48,6 @@ type Conditional struct {
 
 	Threshold uint
 
-	LinkID uint
+	LinkID uint `gorm:"index"`
 	PostID uint `gorm:"index"`
 }
