@@ -8,6 +8,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/handlers"
 
 	"github.com/kryptn/modulario/data"
 	"github.com/kryptn/modulario/proto"
@@ -19,7 +20,7 @@ func Handle() {
 	app := buildHandler()
 
 	srv := &http.Server{
-		Handler: app.router,
+		Handler: app.handler,
 		Addr: ":5000",
 		WriteTimeout: 10 * time.Second,
 		ReadTimeout: 10 * time.Second,
@@ -43,12 +44,15 @@ func buildHandler() *App {
 	app.router.HandleFunc(`/api/v1/delete/{key:[a-zA-Z0-9]{5,12}}`, app.DeletePost).Methods("GET").Name("delete_post")
 	app.router.HandleFunc("/api/v1/create/", app.CreatePost).Methods("POST")
 
+	app.handler = handlers.CORS()(app.router)
+
 	return &app
 }
 
 type App struct {
 	engine data.Engine
 	router *mux.Router
+	handler http.Handler
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
