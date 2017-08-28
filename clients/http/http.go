@@ -40,6 +40,7 @@ func buildHandler() *App {
 	app.router = mux.NewRouter()
 	app.router.HandleFunc("/", index).Methods("GET")
 	app.router.HandleFunc(`/api/v1/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.getPost)).Methods("GET").Name("post")
+	app.router.HandleFunc(`/api/v1/visit/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.visitPost)).Methods("GET").Name("post")
 	app.router.HandleFunc(`/api/v1/view/{key:[a-zA-Z0-9]{5,12}}`, app.GetPost(app.viewPost)).Methods("GET").Name("view_post")
 	app.router.HandleFunc(`/api/v1/delete/{key:[a-zA-Z0-9]{5,12}}`, app.DeletePost).Methods("GET").Name("delete_post")
 	app.router.HandleFunc("/api/v1/create/", app.CreatePost).Methods("POST")
@@ -94,6 +95,26 @@ func (app *App) getPost(post *data.Post, w http.ResponseWriter, r *http.Request)
 	}
 
 	http.Redirect(w, r, link.Url, http.StatusTemporaryRedirect)
+}
+
+func (app *App) visitPost(post *data.Post, w http.ResponseWriter, r *http.Request) {
+	link, err := app.engine.VisitPost(post)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error while visiting: %s", err)
+		return
+	}
+
+	payload, err := json.Marshal(&link)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error while marshalling: %s", err)
+		return
+	}
+
+	w.Header().Set("Content-type", "application/json")
+	w.Write(payload)
+
 }
 
 func (app *App) CreatePost(w http.ResponseWriter, r *http.Request) {
