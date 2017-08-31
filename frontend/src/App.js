@@ -14,16 +14,18 @@ const Home = () => (
 )
 
 const CreatePost = ({ match }) => (
-  <div> words </div>
+  <div>
+    words
+  </div>
 )
 
 const ViewPost = ({ match }) => (
   <div>
-    <Fetch url={`http://localhost:5000/api/v1/view/${match.params.postId}`}>
-      {({ loading, data, error }) => (
+    <Fetch url={`http://localhost:5000/api/v1/view/${match.params.postId}`} options={{credentials: 'same-origin', mode: 'cors'}}>
+      {({ loading, data, error, request, response }) => (
         <div>
           {loading && <span>Loading...</span>}
-          {data && <div><pre>{JSON.stringify(data, null, 2) }</pre></div>}
+          {data && <div><pre>{JSON.stringify(data, null, 2) }</pre><pre>{JSON.stringify(response.headers, null, 2) }</pre></div>}
           {error && <span>Post not found</span>}
         </div>
       )}
@@ -51,7 +53,7 @@ class App extends Component {
            <Route exact path="/" component={Home}/>
            <Route path="/create" component={CreatePost}/>
            <Route path="/view/:postId" component={ViewPost}/>
-           <Route path="/:postId" component={VisitPost}/>
+           <Route path="/v/:postId" component={VisitPost}/>
 
          </div>
        </Router>

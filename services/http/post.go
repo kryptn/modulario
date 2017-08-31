@@ -1,4 +1,4 @@
-package data
+package http
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 
 var runes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func (e *Engine) CreatePost(user User, request proto.JsonCreateRequest) (Post, error) {
+func (e *Engine) CreatePost(user User, request proto.CreatePostRequest) (Post, error) {
 	post := Post{
 		Key:         makeKey(10),
 		UserID:      user.ID,
@@ -69,6 +69,14 @@ func (e *Engine) GetPostLinks(key string) (*Post, error) {
 	var post Post
 	err := e.db.Preload("Links.Condition").Where(&Post{Key: key}).First(&post).Error
 	return &post, err
+}
+
+func (e *Engine) VisitKey(key string) (Link, error) {
+	post, err := e.GetPost(key)
+	if err != nil {
+		return Link{}, err
+	}
+	return e.VisitPost(&post)
 }
 
 func (e *Engine) VisitPost(post *Post) (link Link, err error) {

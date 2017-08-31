@@ -1,4 +1,4 @@
-package data
+package http
 
 import (
 	"math/rand"
