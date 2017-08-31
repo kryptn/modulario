@@ -18,5 +18,5 @@ func main() {
 	//app := client.Handle
 	//app()
 
-	client.Handle()()
+	client.ClientHandler()()
 }
