@@ -1,8 +1,6 @@
 FROM golang:1.8-alpine3.6
 
-ARG GITHUB_TOKEN
-
-WORKDIR /go/src/app
+WORKDIR /go/src/github.com/kryptn/modulario
 COPY . .
 
 RUN apk add -U --virtual .deps git gcc musl-dev \

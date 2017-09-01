@@ -1,12 +1,10 @@
 package main
 
 import (
-	//client "github.com/kryptn/modulario/clients/http"
+	"log"
 	"github.com/joho/godotenv"
 
 	client "github.com/kryptn/modulario/clients/http"
-
-	"log"
 )
 
 func main() {
@@ -15,8 +13,6 @@ func main() {
 		log.Fatalf("Error loading .env file: %s", err)
 	}
 
-	//app := client.Handle
-	//app()
-
-	client.ClientHandler()()
+	app := client.BuildHandler()
+	app()
 }

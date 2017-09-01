@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-func ClientHandler() func() {
+func BuildHandler() func() {
 
 	r := mux.NewRouter()
 
